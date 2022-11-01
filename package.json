@@ -11,6 +11,10 @@
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hellomurphy/printer-queue"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
