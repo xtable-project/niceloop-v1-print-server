@@ -11,8 +11,13 @@ const onSelectedPrinter = async (event) => {
   const isKeyDuplicate = getKeysByDuplicateValue !== undefined;
 
   if (isKeyDuplicate) {
-    printerDB[getKeysByDuplicateValue] = printerDB[printer];
-    printerDB[printer] = name;
+    if (printerDB[getKeysByDuplicateValue] !== "") {
+      printerDB[getKeysByDuplicateValue] = printerDB[printer];
+      printerDB[printer] = name;
+    } else {
+      printerDB[getKeysByDuplicateValue] = "";
+      printerDB[printer] = name;
+    }
   } else {
     printerDB[printer] = name;
   }
@@ -206,8 +211,7 @@ function showNotification(message) {
 window.addEventListener("load", async () => {
   const settings = await fetchSetting();
   const milliseconds = settings.alertTime * 1000;
-  console.log("Milli second: ", milliseconds);
   setInterval(() => {
     watchPrinter(settings.alertTime);
-  }, 15000);
+  }, milliseconds);
 });

@@ -1,12 +1,12 @@
 {
-  "name": "never-give-up-2",
+  "name": "printer-queue",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "set NODE_ENV=development&&electron-forge start",
     "dev": "set NODE_ENV=development&&electron .",
-    "install": "node-pre-gyp install --fallback-to-build",
+    "install-node-pre-gyp": "node-pre-gyp install --fallback-to-build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
     "make": "electron-forge make"
