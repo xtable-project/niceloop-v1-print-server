@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="./style/output.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="mt-8 flex flex-col">
+        <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div
+            class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
+          >
+            <div
+              class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+            >
+              <table class="min-w-full divide-y divide-gray-300">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                    >
+                      No
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Printer Name
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Status
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Jobs
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Last Updated
+                    </th>
+                    <th scope="col" class="relative py-3.5 pr-4 sm:pr-6">
+                      <span class="sr-only">Alert</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white">
+                  <!-- Odd row -->
+                  <tr>
+                    <td
+                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                    >
+                      1
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <div>
+                        <select
+                          id="printer1"
+                          name="printer1"
+                          onchange="onSelectedPrinter(event)"
+                          class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                        ></select>
+                      </div>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer1-status"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer1-jobs"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p id="printer1-afterfoundjobs"></p>
+                      <p class="text-red-200" id="printer1-lastUpdated"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer1-error"></p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                    >
+                      2
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <div>
+                        <select
+                          id="printer2"
+                          name="printer2"
+                          onchange="onSelectedPrinter(event)"
+                          class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                        ></select>
+                      </div>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer2-status"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer2-jobs"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p id="printer2-afterfoundjobs"></p>
+                      <p class="text-red-200" id="printer2-lastUpdated"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer2-error"></p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                    >
+                      3
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <div>
+                        <select
+                          id="printer3"
+                          name="printer3"
+                          onchange="onSelectedPrinter(event)"
+                          class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                        ></select>
+                      </div>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer3-status"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer3-jobs"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p id="printer3-afterfoundjobs"></p>
+                      <p class="text-red-200" id="printer3-lastUpdated"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer3-error"></p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                    >
+                      4
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <div>
+                        <select
+                          id="printer4"
+                          name="printer4"
+                          onchange="onSelectedPrinter(event)"
+                          class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                        ></select>
+                      </div>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer4-status"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer4-jobs"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p id="printer4-afterfoundjobs"></p>
+                      <p class="text-red-200" id="printer4-lastUpdated"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer4-error"></p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                    >
+                      5
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <div>
+                        <select
+                          id="printer5"
+                          name="printer5"
+                          onchange="onSelectedPrinter(event)"
+                          class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                        ></select>
+                      </div>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer5-status"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer5-jobs"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p id="printer5-afterfoundjobs"></p>
+                      <p class="text-red-200" id="printer5-lastUpdated"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-red-200" id="printer5-error"></p>
+                    </td>
+                  </tr>
+
+                  <!-- More people... -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="./js/renderer.js"></script>
+</html>

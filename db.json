@@ -1,0 +1,16 @@
+{
+  "printers": {
+    "printer2": "",
+    "printer3": "",
+    "printer4": "",
+    "printer5": "Microsoft Print to PDF",
+    "printer1": "Canon G2010 series"
+  },
+  "record": {
+    "printer1": [],
+    "printer2": [],
+    "printer3": [],
+    "printer4": [],
+    "printer5": []
+  }
+}
