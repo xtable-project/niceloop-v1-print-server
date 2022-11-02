@@ -1,3 +1,11 @@
+const { contextBridge, ipcRenderer } = require("electron");
+
+contextBridge.exposeInMainWorld("quit", {
+  exit: () => {
+    ipcRenderer.invoke("quit-app");
+  },
+});
+
 window.addEventListener("DOMContentLoaded", async () => {
   const printers = await fetch("http://localhost:5050/printer")
     .then((response) => {

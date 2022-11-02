@@ -1,5 +1,10 @@
 const printers = ["printer1", "printer2", "printer3", "printer4", "printer5"];
 
+const exitButton = document.getElementById("exit-button");
+exitButton.addEventListener("click", () => {
+  window.quit.exit();
+});
+
 const onSelectedPrinter = async (event) => {
   const printer = event.target.name;
   const name = event.target.value;

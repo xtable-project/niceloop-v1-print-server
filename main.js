@@ -1,12 +1,16 @@
 require("dotenv").config();
 require("./express/server");
 
-const { app, autoUpdater, dialog, BrowserWindow } = require("electron");
+const {
+  app,
+  autoUpdater,
+  dialog,
+  BrowserWindow,
+  Tray,
+  Menu,
+  ipcMain,
+} = require("electron");
 const path = require("path");
-
-const server =
-  "https://printer-queue-niceloop-dj161j9n6-hellomurphy.vercel.app";
-const url = `${server}/update/${process.platform}/${app.getVersion()}`;
 
 const AutoLaunch = require("auto-launch");
 const autoLauncher = new AutoLaunch({
@@ -25,6 +29,7 @@ autoLauncher
     throw err;
   });
 
+let tray = null;
 function createWindow() {
   const win = new BrowserWindow({
     width: 1024,
@@ -35,6 +40,31 @@ function createWindow() {
   });
 
   win.loadFile("./src/index.html");
+
+  win.on("minimize", (event) => {
+    event.preventDefault();
+    win.hide();
+  });
+
+  win.on("close", (event) => {
+    event.preventDefault();
+    win.hide();
+  });
+
+  tray = new Tray("./src/asset/icon/caution.png");
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: "Exit",
+      click: () => {
+        app.exit();
+      },
+    },
+  ]);
+  tray.setToolTip("Printer Queue Running");
+  tray.setContextMenu(contextMenu);
+  tray.addListener("click", () => {
+    win.show();
+  });
 
   if (env === "development") {
     win.webContents.openDevTools();
@@ -69,6 +99,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
+
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -85,4 +116,8 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
+});
+
+ipcMain.handle("quit-app", () => {
+  app.quit();
 });
