@@ -4,6 +4,12 @@ const onSelectedPrinter = async (event) => {
   const printer = event.target.name;
   const name = event.target.value;
 
+  const printers = await getCurrentPrinters(printer, name);
+  await savePrinterDB(printers);
+  await watchPrinter(15);
+};
+
+const getCurrentPrinters = async (printer, name) => {
   const printerDB = await fetchPrinterDB();
   const getKeysByDuplicateValue = Object.keys(printerDB).find(
     (key) => printerDB[key] === name
@@ -22,13 +28,17 @@ const onSelectedPrinter = async (event) => {
     printerDB[printer] = name;
   }
 
+  return printerDB;
+};
+
+const savePrinterDB = async (printers) => {
   await fetch("http://localhost:5050/printer", {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ printers: printerDB }),
+    body: JSON.stringify({ printers }),
   });
 };
 
@@ -87,12 +97,20 @@ const fetchSetting = async () => {
 
 const watchPrinter = async (alertTime) => {
   console.log("Start watching printer.");
-  const watchList = await fetchWatchList();
-  watchList.forEach(async (watch) => {
-    const printerInfo = await fectchPrinterInfo(watch.name);
-    updatePritnerInfo(watch.printer, printerInfo, alertTime);
-    await updateRecord(watch.printer, printerInfo.jobs, printerInfo.name);
+  const printerDB = await fetchPrinterDB();
+
+  Object.keys(printerDB).forEach(async (printer) => {
+    let printerInfo = {};
+    if (printerDB[printer] !== "") {
+      printerInfo = await fectchPrinterInfo(printerDB[printer]);
+      updatePritnerInfo(printer, printerInfo);
+      await updateRecord(printer, printerInfo.jobs, printerInfo.name);
+    } else {
+      updatePritnerInfo(printer, printerInfo);
+      await updateRecord(printer, printerInfo.jobs, printerInfo.name);
+    }
   });
+
   await checkRecord(alertTime);
 };
 
@@ -141,36 +159,30 @@ const updatePritnerInfo = (printer, info) => {
   const error = document.getElementById(`${printer}-error`);
   const lastUpdate = document.getElementById(`${printer}-lastUpdated`);
 
-  const totalJobs = info.jobs ? info.jobs.length : 0;
-
-  if (info !== undefined) {
-    status.innerHTML = isOffline(info.attributes) ? "Offline" : "Online";
-    jobs.innerHTML = totalJobs;
-    lastUpdate.innerHTML = Date.now();
-    // error.innerHTML = checkQueueError(
-    //   oldDate,
-    //   Date.now(),
-    //   totalJobs,
-    //   info.name,
-    //   alertTime
-    // )
-    //   ? "ERROR"
-    //   : "";
-  } else {
+  if (Object.keys(info).length === 0) {
     status.innerHTML = "-";
     jobs.innerHTML = "-";
     lastUpdate.innerHTML = "-";
-    error.innerHTML = "";
+    error.style.visibility = "hidden";
+  } else {
+    status.innerHTML = isOffline(info.attributes) ? "Offline" : "Online";
+    jobs.innerHTML = info.jobs ? info.jobs.length : 0;
+    lastUpdate.innerHTML = Date.now();
   }
 };
 
 const checkRecord = async (alertTime) => {
   const records = await fetchRecord();
   for (let i = 0; i < printers.length; i++) {
+    const error = document.getElementById(`${printers[i]}-error`);
+    error.style.visibility = "hidden";
     if (records[printers[i]].length === 0) continue;
     records[printers[i]].forEach((record) => {
       if (isOverTime(record.timestamp, alertTime) === true) {
         showNotification(`Printer ${record.name} is error!`);
+        error.style.visibility = "visible";
+      } else {
+        error.style.visibility = "hidden";
       }
     });
   }
@@ -199,19 +211,23 @@ const fetchRecord = async () => {
 };
 
 const isOffline = (attributes) => {
+  if (!attributes) return;
   const isOffline = attributes.includes("OFFLINE");
   return isOffline;
 };
 
 function showNotification(message) {
+  const audio = document.getElementById("audio");
   const NOTIFICATION_TITLE = "Niceloop Printer";
   new Notification(NOTIFICATION_TITLE, { body: message });
+  audio.play();
 }
 
 window.addEventListener("load", async () => {
   const settings = await fetchSetting();
-  const milliseconds = settings.alertTime * 1000;
-  setInterval(() => {
-    watchPrinter(settings.alertTime);
-  }, milliseconds);
+  const milliseconds = settings.refreshTime * 1000;
+
+  setInterval(async () => {
+    await watchPrinter(15);
+  }, 10000);
 });

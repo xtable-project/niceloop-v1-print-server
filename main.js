@@ -1,18 +1,12 @@
 require("dotenv").config();
 require("./express/server");
 
-// require("electron-reload")(__dirname, {
-//   electron: path.join(__dirname, "node_modules", ".bin", "electron"),
-// });
-
 const { app, autoUpdater, dialog, BrowserWindow } = require("electron");
 const path = require("path");
 
 const server =
   "https://printer-queue-niceloop-dj161j9n6-hellomurphy.vercel.app";
 const url = `${server}/update/${process.platform}/${app.getVersion()}`;
-
-autoUpdater.setFeedURL({ url });
 
 const AutoLaunch = require("auto-launch");
 const autoLauncher = new AutoLaunch({
@@ -42,40 +36,50 @@ function createWindow() {
 
   win.loadFile("./src/index.html");
 
-  // if (env === "development" || env === "production") {
-  //   win.webContents.openDevTools();
-  // }
+  if (env === "development") {
+    win.webContents.openDevTools();
+  }
+
+  // autoUpdater.setFeedURL({ url });
+  // autoUpdater.checkForUpdates();
 }
 
-autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
-  const dialogOpts = {
-    type: "info",
-    buttons: ["Restart", "Later"],
-    title: "Application Update",
-    message: process.platform === "win32" ? releaseNotes : releaseName,
-    detail:
-      "A new version has been downloaded. Restart the application to apply the updates.",
-  };
+// autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
+//   const dialogOpts = {
+//     type: "info",
+//     buttons: ["Restart", "Later"],
+//     title: "Application Update",
+//     message: process.platform === "win32" ? releaseNotes : releaseName,
+//     detail:
+//       "A new version has been downloaded. Restart the application to apply the updates.",
+//   };
 
-  dialog.showMessageBox(dialogOpts).then((returnValue) => {
-    if (returnValue.response === 0) autoUpdater.quitAndInstall();
-  });
-});
+//   dialog.showMessageBox(dialogOpts).then((returnValue) => {
+//     if (returnValue.response === 0) autoUpdater.quitAndInstall();
+//   });
+// });
+
+// autoUpdater.on("update-available", () => {
+//   console.log("Have new version!!!!");
+// });
+
+// autoUpdater.on("update-not-available", () => {
+//   console.log("Not have new version!!!!");
+// });
 
 app.whenReady().then(() => {
   createWindow();
   app.on("activate", () => {
-    autoUpdater.checkForUpdates();
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
   });
 });
 
-autoUpdater.on("error", (message) => {
-  console.error("There was a problem updating the application");
-  console.error(message);
-});
+// autoUpdater.on("error", (message) => {
+//   console.error("There was a problem updating the application");
+//   console.error(message);
+// });
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {

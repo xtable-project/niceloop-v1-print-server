@@ -42,7 +42,8 @@ app.get("/printer/queue/:name", (req, res) => {
 });
 
 app.post("/printer", async (req, res) => {
-  await db.savePrinter(req.body.printers);
+  const response = await db.savePrinter(req.body.printers);
+  res.json(response);
 });
 
 app.get("/record", async (req, res) => {
@@ -53,7 +54,8 @@ app.get("/record", async (req, res) => {
 app.post("/record", async (req, res) => {
   const { printer, recordId, timestamp, name } = req.body;
   const response = await db.saveRecord(printer, recordId, timestamp, name);
-  return response;
+
+  res.json(response);
 });
 
 app.delete("/record", async (req, res) => {
@@ -68,7 +70,8 @@ app.get("/setting", async (req, res) => {
 
 app.post("/setting", async (req, res) => {
   const { name, value } = req.body;
-  await db.saveSetting(name, value);
+  const response = await db.saveSetting(name, value);
+  res.json(response);
 });
 
 app.listen(port, () => {
