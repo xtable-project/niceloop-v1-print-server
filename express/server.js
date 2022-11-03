@@ -60,7 +60,8 @@ app.post("/record", async (req, res) => {
 
 app.delete("/record", async (req, res) => {
   const { printer, recordId } = req.body;
-  await db.clearRecord(printer, recordId);
+  const response = await db.clearRecord(printer, recordId);
+  res.json(response);
 });
 
 app.get("/setting", async (req, res) => {

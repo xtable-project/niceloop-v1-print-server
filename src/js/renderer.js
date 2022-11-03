@@ -121,18 +121,25 @@ const watchPrinter = async (alertTime) => {
 
 const updateRecord = async (printer, jobs, name) => {
   const getRecord = await fetchRecord();
+  const lastUpdate = document.getElementById(`${printer}-lastUpdated-job`);
   if (jobs !== undefined) {
     for (let i = 0; i < jobs.length; i++) {
       const records = getRecord[printer] || [];
       const isHaveRecord = records.some((record) => record.id == jobs[i].id);
       if (!isHaveRecord || records.length === 0) {
         createRecord(printer, jobs[i].id, Date.now(), name);
+        lastUpdate.innerHTML = new Date(Date.now()).toLocaleString().slice(10);
       }
     }
   }
 
   if (jobs === undefined && getRecord[printer].length !== 0) {
     await deleteRecord(printer);
+    lastUpdate.innerHTML = "-";
+  }
+
+  if (jobs === undefined) {
+    lastUpdate.innerHTML = "-";
   }
 };
 
@@ -162,17 +169,19 @@ const updatePritnerInfo = (printer, info) => {
   const status = document.getElementById(`${printer}-status`);
   const jobs = document.getElementById(`${printer}-jobs`);
   const error = document.getElementById(`${printer}-error`);
+  const lastUpdateJob = document.getElementById(`${printer}-lastUpdated-job`);
   const lastUpdate = document.getElementById(`${printer}-lastUpdated`);
 
   if (Object.keys(info).length === 0) {
     status.innerHTML = "-";
     jobs.innerHTML = "-";
+    lastUpdateJob.innerHTML = "-";
     lastUpdate.innerHTML = "-";
     error.style.visibility = "hidden";
   } else {
     status.innerHTML = isOffline(info.attributes) ? "Offline" : "Online";
     jobs.innerHTML = info.jobs ? info.jobs.length : 0;
-    lastUpdate.innerHTML = Date.now();
+    lastUpdate.innerHTML = new Date(Date.now()).toLocaleString().slice(10);
   }
 };
 

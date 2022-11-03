@@ -17,6 +17,9 @@
   </head>
   <body>
     <div class="px-4 sm:px-6 lg:px-8">
+      <div class="w-full flex justify-end">
+        <p id="get-version" class="truncate font-medium"></p>
+      </div>
       <div class="mt-8 flex flex-col">
         <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div
@@ -51,6 +54,12 @@
                       class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
                       Jobs
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Last job
                     </th>
                     <th
                       scope="col"
@@ -96,7 +105,11 @@
                     <td
                       class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
                     >
-                      <p id="printer1-afterfoundjobs"></p>
+                      <p class="text-black" id="printer1-lastUpdated-job"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
                       <p class="text-black" id="printer1-lastUpdated"></p>
                     </td>
                     <td
@@ -137,6 +150,11 @@
                       class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
                     >
                       <p class="text-black" id="printer2-jobs"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
+                      <p class="text-black" id="printer2-lastUpdated-job"></p>
                     </td>
                     <td
                       class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
@@ -187,7 +205,11 @@
                     <td
                       class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
                     >
-                      <p id="printer3-afterfoundjobs"></p>
+                      <p class="text-black" id="printer3-lastUpdated-job"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
                       <p class="text-black" id="printer3-lastUpdated"></p>
                     </td>
                     <td
@@ -233,7 +255,11 @@
                     <td
                       class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
                     >
-                      <p id="printer4-afterfoundjobs"></p>
+                      <p class="text-black" id="printer4-lastUpdated-job"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
                       <p class="text-black" id="printer4-lastUpdated"></p>
                     </td>
                     <td
@@ -279,7 +305,11 @@
                     <td
                       class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
                     >
-                      <p id="printer5-afterfoundjobs"></p>
+                      <p class="text-black" id="printer5-lastUpdated-job"></p>
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                    >
                       <p class="text-black" id="printer5-lastUpdated"></p>
                     </td>
                     <td

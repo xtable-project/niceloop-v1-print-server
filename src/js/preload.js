@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require("electron");
+const { contextBridge, ipcRenderer, app } = require("electron");
 
 contextBridge.exposeInMainWorld("quit", {
   exit: () => {
@@ -7,6 +7,14 @@ contextBridge.exposeInMainWorld("quit", {
 });
 
 window.addEventListener("DOMContentLoaded", async () => {
+  const replaceText = (selector, text) => {
+    const element = document.getElementById(selector);
+    if (element) element.innerText = text;
+  };
+
+  const version = document.getElementById("get-version");
+  version.innerHTML = `version: ${process.env.npm_package_version}`
+
   const printers = await fetch("http://localhost:5050/printer")
     .then((response) => {
       return response.json();
@@ -61,6 +69,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     const info = printers.find((printer) => printer.name === printerDB[type]);
     updatePritnerInfo(type, info);
+
+    await clearRecord(type);
   }
 });
 
@@ -73,19 +83,32 @@ const updatePritnerInfo = (printer, info) => {
   const status = document.getElementById(`${printer}-status`);
   const jobs = document.getElementById(`${printer}-jobs`);
   const error = document.getElementById(`${printer}-error`);
+  const lastUpdateJob = document.getElementById(`${printer}-lastUpdated-job`);
   const lastUpdate = document.getElementById(`${printer}-lastUpdated`);
 
   if (info !== undefined) {
     status.innerHTML = isOffline(info.attributes) ? "Offline" : "Online";
     jobs.innerHTML = info.jobs ? info.jobs.length : 0;
-    lastUpdate.innerHTML = Date.now();
+    lastUpdateJob.innerHTML = "-";
+    lastUpdate.innerHTML = new Date(Date.now()).toLocaleString().slice(10);
     error.innerHTML = "";
   } else {
     status.innerHTML = "-";
     jobs.innerHTML = "-";
+    lastUpdateJob.innerHTML = "-";
     lastUpdate.innerHTML = "-";
     error.innerHTML = "";
   }
 };
 
-const checkQueueError = () => {};
+const clearRecord = async (printer) => {
+  const response = await fetch("http://localhost:5050/record", {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ printer, recordId: undefined }),
+  });
+  return response;
+};

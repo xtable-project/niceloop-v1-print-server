@@ -1,5 +1,6 @@
 require("dotenv").config();
 require("./express/server");
+require("update-electron-app")();
 
 const {
   app,
@@ -16,6 +17,9 @@ const AutoLaunch = require("auto-launch");
 const autoLauncher = new AutoLaunch({
   name: "printer_service",
 });
+
+require("update-electron-app")();
+if (require("electron-squirrel-startup")) app.quit();
 
 const env = process.env.NODE_ENV || "development";
 
@@ -66,36 +70,10 @@ function createWindow() {
     win.show();
   });
 
-  if (env === "development") {
-    win.webContents.openDevTools();
-  }
-
-  // autoUpdater.setFeedURL({ url });
-  // autoUpdater.checkForUpdates();
+  // if (env === "development") {
+  //   win.webContents.openDevTools();
+  // }
 }
-
-// autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
-//   const dialogOpts = {
-//     type: "info",
-//     buttons: ["Restart", "Later"],
-//     title: "Application Update",
-//     message: process.platform === "win32" ? releaseNotes : releaseName,
-//     detail:
-//       "A new version has been downloaded. Restart the application to apply the updates.",
-//   };
-
-//   dialog.showMessageBox(dialogOpts).then((returnValue) => {
-//     if (returnValue.response === 0) autoUpdater.quitAndInstall();
-//   });
-// });
-
-// autoUpdater.on("update-available", () => {
-//   console.log("Have new version!!!!");
-// });
-
-// autoUpdater.on("update-not-available", () => {
-//   console.log("Not have new version!!!!");
-// });
 
 app.whenReady().then(() => {
   createWindow();
@@ -107,11 +85,6 @@ app.whenReady().then(() => {
   });
 });
 
-// autoUpdater.on("error", (message) => {
-//   console.error("There was a problem updating the application");
-//   console.error(message);
-// });
-
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
@@ -119,5 +92,5 @@ app.on("window-all-closed", () => {
 });
 
 ipcMain.handle("quit-app", () => {
-  app.quit();
+  app.exit();
 });
