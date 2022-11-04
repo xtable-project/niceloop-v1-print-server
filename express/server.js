@@ -42,7 +42,8 @@ app.get("/printer/queue/:name", (req, res) => {
 });
 
 app.post("/printer", async (req, res) => {
-  const response = await db.savePrinter(req.body.printers);
+  const { printer, printerName } = req.body;
+  const response = await db.savePrinter(printer, printerName);
   res.json(response);
 });
 

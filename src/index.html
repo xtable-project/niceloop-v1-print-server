@@ -14,348 +14,172 @@
         margin-bottom: 20px;
       }
     </style>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
- 
+    <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script> -->
+    <script src="./js/vue.js"></script>
+    <script src="./js/lodash.js"></script>
   </head>
   <body>
-
     <div id="app">
-
-    </div>
-
-    <!-- <div class="px-4 sm:px-6 lg:px-8">
-      <div class="w-full flex justify-end">
-        <p id="get-version" class="truncate font-medium"></p>
-      </div>
-      <div class="mt-8 flex flex-col">
-        <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div
-            class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
-          >
+      <div class="px-4 sm:px-6 lg:px-8">
+        <div class="w-full flex justify-end">
+          <p id="get-version" class="truncate font-medium">
+            version: {{version}}
+          </p>
+        </div>
+        <div class="w-full flex justify-end">
+          <p id="get-version" class="truncate font-medium"></p>
+        </div>
+        <div class="mt-8 flex flex-col">
+          <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div
-              class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+              class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
             >
-              <table class="min-w-full divide-y divide-gray-300">
-                <thead class="bg-gray-50">
-                  <tr>
-                    <th
-                      scope="col"
-                      class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+              <div
+                class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+              >
+                <table class="min-w-full divide-y divide-gray-300">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                      >
+                        No
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Printer Name
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Status
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Jobs
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Last job
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Last Updated
+                      </th>
+                      <th scope="col" class="relative py-3.5 pr-4 sm:pr-6">
+                        <span class="sr-only">Alert</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white">
+                    <tr
+                      v-for="(printer, printerIdx) in myPrinters"
+                      :key="printer"
                     >
-                      No
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                    >
-                      Printer Name
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                    >
-                      Status
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                    >
-                      Jobs
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                    >
-                      Last job
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                    >
-                      Last Updated
-                    </th>
-                    <th scope="col" class="relative py-3.5 pr-4 sm:pr-6">
-                      <span class="sr-only">Alert</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white">
-               
-                  <tr>
-                    <td
-                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                    >
-                      1
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <div>
-                        <select
-                          id="printer1"
-                          name="printer1"
-                          onchange="onSelectedPrinter(event)"
-                          class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                        ></select>
-                      </div>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer1-status"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer1-jobs"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer1-lastUpdated-job"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer1-lastUpdated"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <img
-                        src="./asset/icon/caution.png"
-                        class="text-black"
-                        style="width: 25%; visibility: hidden"
-                        id="printer1-error"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                    >
-                      2
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <div>
-                        <select
-                          id="printer2"
-                          name="printer2"
-                          onchange="onSelectedPrinter(event)"
-                          class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                        ></select>
-                      </div>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer2-status"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer2-jobs"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer2-lastUpdated-job"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <p id="printer2-afterfoundjobs"></p>
-                      <p class="text-black" id="printer2-lastUpdated"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <img
-                        src="./asset/icon/caution.png"
-                        class="text-black"
-                        style="width: 25%; visibility: hidden"
-                        id="printer2-error"
-                      />
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td
-                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                    >
-                      3
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <div>
-                        <select
-                          id="printer3"
-                          name="printer3"
-                          onchange="onSelectedPrinter(event)"
-                          class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                        ></select>
-                      </div>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer3-status"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer3-jobs"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer3-lastUpdated-job"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer3-lastUpdated"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <img
-                        src="./asset/icon/caution.png"
-                        class="text-black"
-                        style="width: 25%; visibility: hidden"
-                        id="printer3-error"
-                      />
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td
-                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                    >
-                      4
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <div>
-                        <select
-                          id="printer4"
-                          name="printer4"
-                          onchange="onSelectedPrinter(event)"
-                          class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                        ></select>
-                      </div>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer4-status"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer4-jobs"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer4-lastUpdated-job"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer4-lastUpdated"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <img
-                        src="./asset/icon/caution.png"
-                        class="text-black"
-                        style="width: 25%; visibility: hidden"
-                        id="printer4-error"
-                      />
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td
-                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                    >
-                      5
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <div>
-                        <select
-                          id="printer5"
-                          name="printer5"
-                          onchange="onSelectedPrinter(event)"
-                          class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                        ></select>
-                      </div>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer5-status"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer5-jobs"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer5-lastUpdated-job"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <p class="text-black" id="printer5-lastUpdated"></p>
-                    </td>
-                    <td
-                      class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                    >
-                      <img
-                        src="./asset/icon/caution.png"
-                        class="text-black"
-                        style="width: 25%; visibility: hidden"
-                        id="printer5-error"
-                      />
-                    </td>
-                  </tr>
-
-                   
-                </tbody>
-              </table>
+                      <td
+                        class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                      >
+                        {{printerIdx + 1}}
+                      </td>
+                      <td
+                        class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                      >
+                        <div>
+                          <select
+                            v-model="myPrinters[printerIdx]"
+                            @change="onSeletedPrinter(printerIdx)"
+                            class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                          >
+                            <option value="">Not selected</option>
+                            <option
+                              v-for="printer in listAllPrinters"
+                              :key="printer.name"
+                            >
+                              {{printer.name}}
+                            </option>
+                          </select>
+                        </div>
+                      </td>
+                      <td
+                        class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                      >
+                        <p class="text-black">
+                          {{myPrinters[printerIdx] !== "" ?
+                          getPrinterStatus(myPrinters[printerIdx]) : '-'}}
+                        </p>
+                      </td>
+                      <td
+                        class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                      >
+                        <p class="text-black">
+                          {{myPrinters[printerIdx] !== "" ?
+                          getJobs(myPrinters[printerIdx]) : '-'}}
+                        </p>
+                      </td>
+                      <td
+                        class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                      >
+                        <p class="text-black">
+                          {{myPrinters[printerIdx] !== "" ? new
+                          Date(getLastJobTime(printerIdx)).toLocaleTimeString()
+                          : '-'}}
+                        </p>
+                      </td>
+                      <td
+                        class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                      >
+                        <p class="text-black text-center">
+                          {{myPrinters[printerIdx] !== "" ? new
+                          Date(lastUpdate[printerIdx]).toLocaleTimeString() :
+                          '-'}}
+                        </p>
+                      </td>
+                      <td
+                        class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
+                      >
+                        <img
+                          src="./asset/icon/caution.png"
+                          class="text-black"
+                          style="width: 20%"
+                          v-show="status[printer] === 'fail'"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="bottom-left">
-      <button
-        id="exit-button"
-        type="button"
-        class="w-36 inline-flex items-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-      >
-        Exit
-      </button>
-    </div>
+      <div class="bottom-left">
+        <button
+          @click="exit()"
+          type="button"
+          class="w-36 inline-flex items-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+        >
+          Exit
+        </button>
+      </div>
 
-    <audio
-      src="./asset/sound/mixkit-bell-notification-933.mp3"
-      id="audio"
-    ></audio> -->
+      <audio
+        src="./asset/sound/mixkit-bell-notification-933.mp3"
+        id="audio"
+      ></audio>
+    </div>
   </body>
 
- 
   <script src="./js/app.js"></script>
 </html>

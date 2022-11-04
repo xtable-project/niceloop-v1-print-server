@@ -1,126 +1,193 @@
-const { createApp } = Vue
+const { createApp } = Vue;
 
 createApp({
   data() {
     return {
-        listAllPrinters : [],
-        myPrinters : ["canno01", "hp01"],
-        lastUpdate : { 
-            "0" : 12232,
-        },
-        jobs : { 
-            "0" :  [  { id: 1111  } , { }  ],
-            1 : [  { id: 2222  } , { }  ],
-        },
-        jobIdStartTime : { 
-            "Canon G2010 series:21" : 123312235
-        },
-        status : { 
-            "0" : "ok" // fail, 
-        }
-        timer : {  },  //secs
-        version : "1.0.0",
-    }
+      listAllPrinters: [],
+      myPrinters: ["", "", "", "", ""], //["canno01", "hp01"]
+      lastUpdate: {}, //{ 0: 12232 },
+      jobs: {}, // { 0: [{ id: 1111 }, {}],
+      jobIdStartTime: {}, // "Canon G2010 series:21": 123312235,
+      status: {}, // {0: "ok", // fail,}
+      timer: {}, // {refreshTime: 0, alertTime: 0}
+      version: "", //"1.0.0"
+    };
   },
-  methods : { 
-    main () { 
-        // get all list
-
-        // restore my printer
-
-        // read timer settings
-
-        // loop fetch printer api 
+  methods: {
+    delay(millisec) {
+      return new Promise((resolve) => setTimeout(resolve, millisec));
     },
-    getAllListPrinter() { 
+    async main() {
+      const refreshTime = this.timer.refreshTime * 1000;
 
+      while (refreshTime) {
+        await this.getAllListPrinter();
+        await this.restoreMyPrinter();
+        this.loopPrinterApi();
+        await this.delay(refreshTime);
+      }
+
+      // get all list
+      // restore my printer
+      // read timer settings
+      // loop fetch printer api
     },
-    restoreMyPrinter() { 
-
+    async getAllListPrinter() {
+      const printers = await this.fetch("printer");
+      this.listAllPrinters = printers;
     },
-    readTimerSetting() { 
+    async restoreMyPrinter() {
+      const printerDB = await this.fetch("printerdb");
 
-    }, 
-    loopPrinterApi () { 
+      for (let index = 0; index < this.myPrinters.length; index++) {
+        this.myPrinters[index] = printerDB[`printer${index + 1}`];
+      }
+    },
 
-        for (let index = 0; index < this.myPrinters.length; index++) {
-            const printerName = this.myPrinters[index];
-            let res =  await axios.get('//get-job')
-            let jobs = res.data
-            this.jobs[index] = jobs
-            this.registerJobTimestamp(printerName, jobs )
-          
+    async readTimerSetting() {
+      const settings = await this.fetch("setting");
+      this.timer = settings;
+    },
+
+    loopPrinterApi() {
+      console.log("Start updating...");
+      for (let index = 0; index < this.myPrinters.length; index++) {
+        const printerName = this.myPrinters[index];
+        this.lastUpdate[index] = new Date().valueOf();
+
+        if (printerName === "") continue;
+        const printer = this.listAllPrinters.find(
+          (printer) => printer.name === printerName
+        );
+
+        if (printer === undefined) continue;
+        const jobs = printer.jobs ? printer.jobs : [];
+        this.jobs[index] = jobs;
+
+        this.registerJobTimestamp(printerName, jobs);
+      }
+
+      this.makeAlert();
+    },
+
+    registerJobTimestamp(printerName, jobs) {
+      let errorFlag = false;
+
+      if (jobs) {
+        for (let index = 0; index < jobs.length; index++) {
+          const keyId = `${printerName}:${jobs[index].id}`;
+          if (this.jobIdStartTime[keyId] === undefined) {
+            this.jobIdStartTime[keyId] = new Date().valueOf();
+          }
+
+          const now = new Date().valueOf();
+          const start = this.jobIdStartTime[keyId];
+
+          const elasp = now - start;
+          const alertTime = this.timer.alertTime * 1000;
+
+          if (elasp > alertTime) {
+            errorFlag = true;
+          }
         }
-        makeAlert()
-        
+      }
+
+      if (errorFlag) {
+        this.status[printerName] = "fail";
+      } else {
+        this.status[printerName] = "ok";
+      }
     },
-    registerJobTimestamp(printerName, jobs) { 
+    clearJob(jobKeyId) {
+      delete this.jobIdStartTime[jobKeyId];
+    },
+    makeAlert() {
+      const status = _.values(this.status); // [ 'ok', 'ok', 'fail']
+      _.forEach(status, (element, index) => {
+        if (element === "fail") {
+          const message = `The ${this.myPrinters[index]} has error, please check your printer.`;
+          this.showNotification(message);
 
-        let errorFlag = false
-        _.for(jobs, (job)=>{
-            let keyId  = `${printerName}:${job.id}`
-            if(this.jobIdStartTime[keyId] == undefined) { 
-                this.jobIdStartTime[keyId] = new Date().valueOf()
-            }  
-            
-            let now = new Date().valueOf()
-            let start = this.jobIdStartTime[keyId]
-
-            let elasp = now - start 
-            if(elasp > 30*1000 )  { 
-                errorFlag = true
-            }
-
-             
+          const audio = document.getElementById("audio");
+          audio.play();
+        }
+      });
+    },
+    async fetch(name, requset = undefined) {
+      const url =
+        requset === undefined
+          ? `http://localhost:5050/${name}`
+          : `http://localhost:5050/${name}/${requset}`;
+      const response = await fetch(url)
+        .then((response) => {
+          return response.json();
         })
-
-         // alert
-        if(errorFlag) { 
-             this.status[printerName] = "fail"
-        }else { 
-            this.status[printerName] = "ok"
-        }
+        .catch((err) => {
+          return err;
+        });
+      return response;
     },
-    makeAlert() { 
-        
-        let hasError = _.values(this.status) // [ 'ok', 'ok', 'fail']
-        hasError = _.filter(hasError, item => item == "fail")
-        
-        if(hasErro.length >= 1) {
-            // noti
-            // play sound
-        }
-    }
+    async post(name, body) {
+      const url = `http://localhost:5050/${name}`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      })
+        .then((response) => {
+          return response;
+        })
+        .catch((err) => {
+          return err;
+        });
+      return response;
+    },
+    showNotification(message) {
+      const NOTIFICATION_TITLE = "Niceloop Printer";
+      new Notification(NOTIFICATION_TITLE, { body: message });
+    },
+    async onSeletedPrinter(index) {
+      const body = {
+        printer: `printer${index + 1}`,
+        printerName: this.myPrinters[index],
+      };
+      const post = await this.post("printer", body);
+      return post;
+    },
+    getPrinterStatus(printerName) {
+      const printer = this.listAllPrinters.find(
+        (printer) => printer.name === printerName
+      );
+      if (printer === undefined) return;
+      const isOffline = printer.attributes.includes("OFFLINE");
+      return isOffline ? "Offline" : "Online";
+    },
+    getJobs(printerName) {
+      const printer = this.listAllPrinters.find(
+        (printer) => printer.name === printerName
+      );
+      if (printer === undefined) return;
+      const jobs = printer.jobs !== undefined ? printer.jobs.length : 0;
+      return jobs;
+    },
+    getLastJobTime(printerIndex) { 
+      return new Date().valueOf();
+    },
+    exit() {
+      window.quit.exit();
+    },
+    async getVersion() {
+      this.version = await window.quit.version();
+    },
   },
-
-  
-}).mount('#app')
-
-
-
-//
-// "jobs": [
-//     {
-//       "id": 21,
-//       "name": "Canon G2010 series",
-//       "printerName": "Canon G2010 series",
-//       "user": "ZIM",
-//       "format": "NT EMF 1.008",
-//       "priority": 1,
-//       "size": 1024,
-//       "status": [
-        
-//       ],
-//       "machineName": "\\\\DESKTOP-RJE2A9S",
-//       "document": "*Untitled - Notepad",
-//       "notifyName": "ZIM",
-//       "printProcessor": "Canon G2010 series Print Processor",
-//       "driverName": "Canon G2010 series",
-//       "position": 1,
-//       "startTime": 0,
-//       "untilTime": 0,
-//       "totalPages": 1,
-//       "time": 0,
-//       "pagesPrinted": 0
-//     }
-//   ]
+  async mounted() {
+    await this.getAllListPrinter();
+    await this.restoreMyPrinter();
+    await this.readTimerSetting();
+    await this.getVersion();
+    await this.main();
+  },
+}).mount("#app");

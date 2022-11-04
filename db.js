@@ -1,4 +1,3 @@
-const e = require("express");
 const fs = require("fs");
 
 class DB {
@@ -16,13 +15,6 @@ class DB {
           printer3: "",
           printer4: "",
           printer5: "",
-        },
-        record: {
-          printer1: [],
-          printer2: [],
-          printer3: [],
-          printer4: [],
-          printer5: [],
         },
       };
       const defaultSetting = {
@@ -82,21 +74,21 @@ class DB {
     return printer;
   }
 
-  async savePrinter(printers) {
+  async savePrinter(printer, printerName) {
     const jsonRecord = await fs.promises.readFile(this.filename, {
       encoding: "utf8",
     });
 
     const objRecord = JSON.parse(jsonRecord);
 
-    objRecord.printers = printers;
+    objRecord.printers[printer] = printerName;
 
     await fs.promises.writeFile(
       this.filename,
       JSON.stringify(objRecord, null, 2)
     );
 
-    return printers;
+    return printer;
   }
 
   async saveSetting(name, value) {

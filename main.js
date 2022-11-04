@@ -10,6 +10,7 @@ const {
   Tray,
   Menu,
   ipcMain,
+  nativeImage,
 } = require("electron");
 const path = require("path");
 
@@ -55,7 +56,10 @@ function createWindow() {
     win.hide();
   });
 
-  tray = new Tray("./src/asset/icon/caution.png");
+  const icon = nativeImage.createFromPath(
+    path.join(__dirname, "src", "asset", "icon", "caution.png")
+  );
+  tray = new Tray(icon);
   const contextMenu = Menu.buildFromTemplate([
     {
       label: "Exit",
@@ -73,9 +77,16 @@ function createWindow() {
   // if (env === "development") {
   //   win.webContents.openDevTools();
   // }
+
+  // win.webContents.openDevTools();
 }
 
+const getVersion = () => {
+  return app.getVersion();
+};
+
 app.whenReady().then(() => {
+  ipcMain.handle("getVersion", getVersion);
   createWindow();
 
   app.on("activate", () => {
