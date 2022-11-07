@@ -28,7 +28,7 @@ app.get("/printerdb", async (req, res) => {
   const printerDB = await db.read();
   res.json(printerDB.printers);
 });
-
+  
 app.get("/printer/:name", (req, res) => {
   const name = req.params.name;
   const printer = getPrinterByName(name);
@@ -72,7 +72,7 @@ app.get("/setting", async (req, res) => {
 
 app.post("/setting", async (req, res) => {
   const { name, value } = req.body;
-  const response = await db.saveSetting(name, value);
+  const response = await setting.saveSetting(name, value);
   res.json(response);
 });
 

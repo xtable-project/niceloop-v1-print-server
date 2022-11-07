@@ -11,6 +11,7 @@ createApp({
       status: {}, // {0: "ok", // fail,}
       timer: {}, // {refreshTime: 0, alertTime: 0}
       version: "", //"1.0.0"
+      lastJobTime: {}, //{0: 12346}
     };
   },
   methods: {
@@ -24,6 +25,7 @@ createApp({
         await this.getAllListPrinter();
         await this.restoreMyPrinter();
         this.loopPrinterApi();
+        this.getLastJobTime();
         await this.delay(refreshTime);
       }
 
@@ -173,8 +175,33 @@ createApp({
       const jobs = printer.jobs !== undefined ? printer.jobs.length : 0;
       return jobs;
     },
-    getLastJobTime(printerIndex) { 
-      return new Date().valueOf();
+    getLastJobTime() {
+      for (let index = 0; index < this.myPrinters.length; index++) {
+        const printerName = this.myPrinters[index];
+        const printer = this.listAllPrinters.find(
+          (printer) => printer.name === printerName
+        );
+        if (printer === undefined) return;
+
+        if (
+          printer.jobs !== undefined &&
+          this.lastJobTime[index] === undefined
+        ) {
+          this.lastJobTime[index] = new Date(
+            new Date().valueOf()
+          ).toLocaleTimeString();
+        }
+
+        if (printer.jobs === undefined) {
+          delete this.lastJobTime[index];
+        }
+      }
+    },
+    getLastUpdate() {
+      const date = new Date(new Date().valueOf())
+        .toLocaleTimeString()
+        .toString();
+      return date;
     },
     exit() {
       window.quit.exit();

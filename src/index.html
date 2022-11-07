@@ -131,17 +131,14 @@
                         class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
                       >
                         <p class="text-black">
-                          {{myPrinters[printerIdx] !== "" ? new
-                          Date(getLastJobTime(printerIdx)).toLocaleTimeString()
-                          : '-'}}
+                         {{lastJobTime[printerIdx] !== undefined ? lastJobTime[printerIdx] : "-"}}
                         </p>
                       </td>
                       <td
                         class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
                       >
                         <p class="text-black text-center">
-                          {{myPrinters[printerIdx] !== "" ? new
-                          Date(lastUpdate[printerIdx]).toLocaleTimeString() :
+                          {{myPrinters[printerIdx] !== "" ? getLastUpdate() :
                           '-'}}
                         </p>
                       </td>

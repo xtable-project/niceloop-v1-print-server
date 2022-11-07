@@ -18,8 +18,8 @@ class DB {
         },
       };
       const defaultSetting = {
-        alertTime: 0,
-        refreshTime: 0,
+        alertTime: 15,
+        refreshTime: 10,
       };
 
       if (this.filename === "db.json") {
@@ -97,8 +97,7 @@ class DB {
     });
 
     const objRecord = JSON.parse(jsonRecord);
-
-    objRecord.setting[name] = value;
+    objRecord[name] = value;
     await fs.promises.writeFile(
       this.filename,
       JSON.stringify(objRecord, null, 2)
