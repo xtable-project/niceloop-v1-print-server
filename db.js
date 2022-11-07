@@ -20,6 +20,7 @@ class DB {
       const defaultSetting = {
         alertTime: 15,
         refreshTime: 10,
+        port: 5050
       };
 
       if (this.filename === "db.json") {

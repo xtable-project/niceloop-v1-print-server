@@ -12,4 +12,11 @@ module.exports = {
       },
     },
   ],
+  config: {
+    forge: {
+      packagerConfig: {
+        icon: './src/asset/icon'
+      }
+    }
+  }
 };

@@ -9,7 +9,7 @@ createApp({
       jobs: {}, // { 0: [{ id: 1111 }, {}],
       jobIdStartTime: {}, // "Canon G2010 series:21": 123312235,
       status: {}, // {0: "ok", // fail,}
-      timer: {}, // {refreshTime: 0, alertTime: 0}
+      setting: { port: 5050 }, // {refreshTime: 0, alertTime: 0}
       version: "", //"1.0.0"
       lastJobTime: {}, //{0: 12346}
     };
@@ -19,7 +19,7 @@ createApp({
       return new Promise((resolve) => setTimeout(resolve, millisec));
     },
     async main() {
-      const refreshTime = this.timer.refreshTime * 1000;
+      const refreshTime = this.setting.refreshTime * 1000;
 
       while (refreshTime) {
         await this.getAllListPrinter();
@@ -31,7 +31,7 @@ createApp({
 
       // get all list
       // restore my printer
-      // read timer settings
+      // read settings
       // loop fetch printer api
     },
     async getAllListPrinter() {
@@ -46,9 +46,9 @@ createApp({
       }
     },
 
-    async readTimerSetting() {
+    async readSetting() {
       const settings = await this.fetch("setting");
-      this.timer = settings;
+      this.setting = settings;
     },
 
     loopPrinterApi() {
@@ -86,7 +86,7 @@ createApp({
           const start = this.jobIdStartTime[keyId];
 
           const elasp = now - start;
-          const alertTime = this.timer.alertTime * 1000;
+          const alertTime = this.setting.alertTime * 1000;
 
           if (elasp > alertTime) {
             errorFlag = true;
@@ -116,10 +116,15 @@ createApp({
       });
     },
     async fetch(name, requset = undefined) {
+      console.log('Port env: ', this.setting.port)
+      let port = "5050";
+      if (this.setting.port !== undefined) {
+        port = this.setting.port;
+      }
       const url =
         requset === undefined
-          ? `http://localhost:5050/${name}`
-          : `http://localhost:5050/${name}/${requset}`;
+          ? `http://localhost:${port}/${name}`
+          : `http://localhost:${port}/${name}/${requset}`;
       const response = await fetch(url)
         .then((response) => {
           return response.json();
@@ -130,7 +135,11 @@ createApp({
       return response;
     },
     async post(name, body) {
-      const url = `http://localhost:5050/${name}`;
+      let port = "5050";
+      if (this.setting.port !== undefined) {
+        port = this.setting.port;
+      }
+      const url = `http://localhost:${port}/${name}`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -185,17 +194,21 @@ createApp({
 
         if (
           printer.jobs !== undefined &&
-          this.lastJobTime[index] === undefined
+          this.lastJobTime[printerName] === undefined
         ) {
-          this.lastJobTime[index] = new Date(
+          this.lastJobTime[printerName] = new Date(
             new Date().valueOf()
           ).toLocaleTimeString();
         }
 
         if (printer.jobs === undefined) {
-          delete this.lastJobTime[index];
+          delete this.lastJobTime[printerName];
         }
+        console.log('this.myPrinters: ', this.myPrinters)
+        console.log('this.lastJobTime: ', this.lastJobTime)
+        
       }
+    
     },
     getLastUpdate() {
       const date = new Date(new Date().valueOf())
@@ -211,9 +224,9 @@ createApp({
     },
   },
   async mounted() {
+    await this.readSetting();
     await this.getAllListPrinter();
     await this.restoreMyPrinter();
-    await this.readTimerSetting();
     await this.getVersion();
     await this.main();
   },

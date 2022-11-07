@@ -1,5 +1,5 @@
 require("dotenv").config();
-require("./express/server");
+const serverRun = require("./express/server");
 require("update-electron-app")();
 
 const {
@@ -15,33 +15,25 @@ const {
 const path = require("path");
 
 const AutoLaunch = require("auto-launch");
-const autoLauncher = new AutoLaunch({
-  name: "printer_service",
-});
 
 require("update-electron-app")();
 if (require("electron-squirrel-startup")) app.quit();
 
 const env = process.env.NODE_ENV || "development";
 
-autoLauncher
-  .isEnabled()
-  .then((isEnabled) => {
-    if (isEnabled) return;
-    autoLauncher.enable();
-  })
-  .catch((err) => {
-    throw err;
-  });
-
 let tray = null;
 function createWindow() {
+  const icon = nativeImage.createFromPath(
+    path.join(__dirname, "src", "asset", "icon", "printer.png")
+  );
+
   const win = new BrowserWindow({
     width: 1024,
     height: 768,
     webPreferences: {
       preload: path.join(__dirname, "./src/js/preload.js"),
     },
+    icon,
   });
 
   win.loadFile("./src/index.html");
@@ -56,9 +48,6 @@ function createWindow() {
     win.hide();
   });
 
-  const icon = nativeImage.createFromPath(
-    path.join(__dirname, "src", "asset", "icon", "caution.png")
-  );
   tray = new Tray(icon);
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -78,15 +67,40 @@ function createWindow() {
   //   win.webContents.openDevTools();
   // }
 
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 }
+
+serverRun.run();
 
 const getVersion = () => {
   return app.getVersion();
 };
 
+const getPort = () => {
+  process.env.PORT = 5051;
+  return process.env.PORT;
+};
+
 app.whenReady().then(() => {
   ipcMain.handle("getVersion", getVersion);
+  ipcMain.handle("port", getPort);
+
+  const autoLauncher = new AutoLaunch({
+    name: "printer_service",
+    path: app.getPath("exe"),
+    isHidden: true,
+  });
+
+  autoLauncher
+    .isEnabled()
+    .then((isEnabled) => {
+      if (isEnabled) return;
+      autoLauncher.enable();
+    })
+    .catch((err) => {
+      throw err;
+    });
+
   createWindow();
 
   app.on("activate", () => {
