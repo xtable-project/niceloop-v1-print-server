@@ -20,7 +20,6 @@ createApp({
     },
     async main() {
       const refreshTime = this.setting.refreshTime * 1000;
-
       while (refreshTime) {
         await this.getAllListPrinter();
         await this.restoreMyPrinter();
@@ -107,7 +106,7 @@ createApp({
       const status = _.values(this.status); // [ 'ok', 'ok', 'fail']
       _.forEach(status, (element, index) => {
         if (element === "fail") {
-          const message = `The ${this.myPrinters[index]} has error, please check your printer.`;
+          const message = `เครื่องพิมพ์ ${this.myPrinters[index]} มีไฟล์ค้างเกินเวลาที่กำหนด กรุณาตรวจสอบ`;
           this.showNotification(message);
 
           const audio = document.getElementById("audio");
@@ -116,7 +115,6 @@ createApp({
       });
     },
     async fetch(name, requset = undefined) {
-      console.log('Port env: ', this.setting.port)
       let port = "5050";
       if (this.setting.port !== undefined) {
         port = this.setting.port;
@@ -157,17 +155,27 @@ createApp({
       return response;
     },
     showNotification(message) {
-      const NOTIFICATION_TITLE = "Niceloop Printer";
-      new Notification(NOTIFICATION_TITLE, { body: message });
+      const icon = "./asset/icon/warning.png";
+      const NOTIFICATION_TITLE = "";
+
+      const notification = new Notification(NOTIFICATION_TITLE, {
+        body: message,
+        icon,
+      });
+
+      notification.addEventListener("click", () => {
+        window.quit.open();
+      });
     },
-    async onSeletedPrinter(index) {
-      const body = {
-        printer: `printer${index + 1}`,
-        printerName: this.myPrinters[index],
-      };
-      const post = await this.post("printer", body);
+    async onSeletedPrinter() {
+      const body = {};
+      _.forEach(this.myPrinters, (printer, index) => {
+        body[`printer${index + 1}`] = printer;
+      });
+      const post = await this.post("allprinter", body);
       return post;
     },
+
     getPrinterStatus(printerName) {
       const printer = this.listAllPrinters.find(
         (printer) => printer.name === printerName
@@ -187,10 +195,10 @@ createApp({
     getLastJobTime() {
       for (let index = 0; index < this.myPrinters.length; index++) {
         const printerName = this.myPrinters[index];
+        if (printerName === "") continue;
         const printer = this.listAllPrinters.find(
           (printer) => printer.name === printerName
         );
-        if (printer === undefined) return;
 
         if (
           printer.jobs !== undefined &&
@@ -204,11 +212,7 @@ createApp({
         if (printer.jobs === undefined) {
           delete this.lastJobTime[printerName];
         }
-        console.log('this.myPrinters: ', this.myPrinters)
-        console.log('this.lastJobTime: ', this.lastJobTime)
-        
       }
-    
     },
     getLastUpdate() {
       const date = new Date(new Date().valueOf())

@@ -20,7 +20,7 @@ class DB {
       const defaultSetting = {
         alertTime: 15,
         refreshTime: 10,
-        port: 5050
+        port: 5050,
       };
 
       if (this.filename === "db.json") {
@@ -75,14 +75,18 @@ class DB {
     return printer;
   }
 
-  async savePrinter(printer, printerName) {
+  async savePrinter(printer, printerName = undefined) {
     const jsonRecord = await fs.promises.readFile(this.filename, {
       encoding: "utf8",
     });
 
     const objRecord = JSON.parse(jsonRecord);
 
-    objRecord.printers[printer] = printerName;
+    if (printerName === undefined) {
+      objRecord.printers = printer;
+    } else {
+      objRecord.printers[printer] = printerName;
+    }
 
     await fs.promises.writeFile(
       this.filename,

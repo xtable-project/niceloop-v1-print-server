@@ -6,4 +6,5 @@ contextBridge.exposeInMainWorld("quit", {
   },
   version: () => ipcRenderer.invoke("getVersion"),
   port: () => ipcRenderer.invoke("getPort"),
+  open: () => ipcRenderer.invoke("open"),
 });

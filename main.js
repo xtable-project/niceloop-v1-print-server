@@ -13,13 +13,35 @@ const {
   nativeImage,
 } = require("electron");
 const path = require("path");
-
+const exec = require("child_process").exec;
 const AutoLaunch = require("auto-launch");
 
 require("update-electron-app")();
 if (require("electron-squirrel-startup")) app.quit();
 
 const env = process.env.NODE_ENV || "development";
+serverRun.run();
+
+const isRunning = (query, cb) => {
+  let platform = process.platform;
+  let cmd = "";
+  switch (platform) {
+    case "win32":
+      cmd = `tasklist`;
+      break;
+    case "darwin":
+      cmd = `ps -ax | grep ${query}`;
+      break;
+    case "linux":
+      cmd = `ps -A`;
+      break;
+    default:
+      break;
+  }
+  exec(cmd, (err, stdout, stderr) => {
+    cb(stdout.toLowerCase().indexOf(query.toLowerCase()) > -1);
+  });
+};
 
 let tray = null;
 function createWindow() {
@@ -63,14 +85,16 @@ function createWindow() {
     win.show();
   });
 
+  ipcMain.handle("open", () => {
+    win.show();
+  });
+
   // if (env === "development") {
   //   win.webContents.openDevTools();
   // }
 
   // win.webContents.openDevTools();
 }
-
-serverRun.run();
 
 const getVersion = () => {
   return app.getVersion();
@@ -102,6 +126,10 @@ app.whenReady().then(() => {
     });
 
   createWindow();
+
+  if (process.platform === "win32") {
+    app.setAppUserModelId("Niceloop Printer Server");
+  }
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

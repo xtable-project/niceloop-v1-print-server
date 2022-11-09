@@ -11,7 +11,7 @@ const app = express();
 const db = new DB("db.json");
 const setting = new DB("setting.json");
 
-const port = 5050
+const port = 5050;
 
 app.use(bodyParser.json());
 
@@ -44,6 +44,12 @@ app.get("/printer/queue/:name", (req, res) => {
 app.post("/printer", async (req, res) => {
   const { printer, printerName } = req.body;
   const response = await db.savePrinter(printer, printerName);
+  res.json(response);
+});
+
+app.post("/allprinter", async (req, res) => {
+  const printers = req.body;
+  const response = await db.savePrinter(printers);
   res.json(response);
 });
 

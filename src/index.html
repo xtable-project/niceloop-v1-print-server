@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Niceloop Printer Server</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="./style/output.css" rel="stylesheet" />
     <style>
@@ -21,8 +22,9 @@
   </head>
   <body>
     <div id="app">
-      <div class="px-4 sm:px-6 lg:px-8">
-        <div class="w-full flex justify-end">
+      <div class="px-4 sm:px-6 lg:px-8 pb-2">
+        <div class="w-full flex justify-between pt-5">
+          <p class="font-bold text-2xl">ระบบตรวจสอบการทำงานเครื่องพิมพ์</p>
           <p id="get-version" class="truncate font-medium">
             version: {{version}}
           </p>
@@ -77,7 +79,7 @@
                       >
                         Last Updated
                       </th>
-                      <th scope="col" class="relative py-3.5 pr-4 sm:pr-6">
+                      <th scope="col" class="relative py-3.5 w-fit">
                         <span class="sr-only">Alert</span>
                       </th>
                     </tr>
@@ -90,7 +92,7 @@
                       <td
                         class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
                       >
-                        {{printerIdx + 1}}
+                        {{printerIdx}}
                       </td>
                       <td
                         class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
@@ -98,7 +100,7 @@
                         <div>
                           <select
                             v-model="myPrinters[printerIdx]"
-                            @change="onSeletedPrinter(printerIdx)"
+                            @change="onSeletedPrinter()"
                             class="mt-1 block w-full rounded-md border-gray-700 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                           >
                             <option value="">Not selected</option>
@@ -131,7 +133,8 @@
                         class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
                       >
                         <p class="text-black">
-                         {{lastJobTime[myPrinters[printerIdx]] !== undefined ? lastJobTime[myPrinters[printerIdx]] : "-"}}
+                          {{lastJobTime[myPrinters[printerIdx]] !== undefined ?
+                          lastJobTime[myPrinters[printerIdx]] : "-"}}
                         </p>
                       </td>
                       <td
@@ -142,15 +145,22 @@
                           '-'}}
                         </p>
                       </td>
-                      <td
-                        class="whitespace-nowrap px-1 py-4 text-sm text-gray-500"
-                      >
-                        <img
-                          src="./asset/icon/caution.png"
-                          class="text-black"
-                          style="width: 20%"
+                      <td class="px-1 py-4 text-sm text-gray-500 w-fit">
+                        <div
                           v-show="status[printer] === 'fail'"
-                        />
+                          class="flex space-x-3 items-center"
+                        >
+                          <img
+                            src="./asset/icon/warning.png"
+                            class="text-black"
+                            style="width: 12%"
+                          />
+                          <p
+                            class="py-1 px-2 bg-red-600 text-white w-fit rounded-md"
+                          >
+                            เครื่องพิมพ์นี้มีไฟล์ค้าง
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   </tbody>
